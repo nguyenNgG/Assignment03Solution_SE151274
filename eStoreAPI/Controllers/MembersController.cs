@@ -1,5 +1,5 @@
 ﻿using BusinessObject;
-using Microsoft.AspNetCore.Http;
+using eStoreAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -19,6 +19,54 @@ namespace eStoreAPI.Controllers
         {
             userManager = _userManager;
             signInManager = _signInManager;
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(RegisterInput obj)
+        {
+            try
+            {
+                var member = new Member { UserName = obj.Email, Email = obj.Email };
+                var result = await userManager.CreateAsync(member, obj.Password);
+                if (result.Succeeded)
+                {
+                    await signInManager.SignInAsync(member, isPersistent: false);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(LoginInput obj)
+        {
+            try
+            {
+                var result = await signInManager.PasswordSignInAsync(obj.Email, obj.Password, obj.RememberMe, lockoutOnFailure: true);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                if (result.IsLockedOut)
+                {
+                    return Forbid();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
