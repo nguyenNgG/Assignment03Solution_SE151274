@@ -1,7 +1,13 @@
+using BusinessObject;
+using DataAccess.Repositories;
+using DataAccess.Repositories.Interfaces;
+using eStoreAPI.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -19,7 +25,10 @@ namespace eStoreAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IMemberRepository, MemberRepository>();
 
+
+            services.AddScoped<IUserStore<Member>, CustomerMemberStore>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

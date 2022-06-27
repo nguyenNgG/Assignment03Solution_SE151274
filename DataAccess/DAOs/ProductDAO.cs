@@ -29,38 +29,38 @@ namespace DataAccess.DAOs
         public async Task<List<Product>> GetList()
         {
             var db = new eStoreDbContext();
-            List<Product> books = null;
-            books = await db.Products.Include(x => x.Category).ToListAsync();
-            return books;
+            List<Product> objs = null;
+            objs = await db.Products.Include(x => x.Category).ToListAsync();
+            return objs;
         }
 
         public async Task<Product> Get(int id)
         {
             var db = new eStoreDbContext();
-            Product book = await db.Products.Include(x => x.Category).FirstOrDefaultAsync(x => x.ProductId == id);
-            return book;
+            Product obj = await db.Products.Include(x => x.Category).FirstOrDefaultAsync(x => x.ProductId == id);
+            return obj;
         }
 
-        public async Task Add(Product book)
+        public async Task Add(Product obj)
         {
             var db = new eStoreDbContext();
-            db.Products.Add(book);
+            db.Products.Add(obj);
             await db.SaveChangesAsync();
         }
 
-        public async Task Update(Product book)
+        public async Task Update(Product obj)
         {
             var db = new eStoreDbContext();
-            db.Products.Update(book);
+            db.Products.Update(obj);
             await db.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
         {
             var db = new eStoreDbContext();
-            Product book = new Product { ProductId = id };
-            db.Products.Attach(book);
-            db.Products.Remove(book);
+            Product obj = new Product { ProductId = id };
+            db.Products.Attach(obj);
+            db.Products.Remove(obj);
             await db.SaveChangesAsync();
         }
     }

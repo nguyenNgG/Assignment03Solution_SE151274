@@ -29,38 +29,38 @@ namespace DataAccess.DAOs
         public async Task<List<Order>> GetList()
         {
             var db = new eStoreDbContext();
-            List<Order> books = null;
-            books = await db.Orders.Include(x => x.Member).ToListAsync();
-            return books;
+            List<Order> objs = null;
+            objs = await db.Orders.Include(x => x.Member).ToListAsync();
+            return objs;
         }
 
         public async Task<Order> Get(int id)
         {
             var db = new eStoreDbContext();
-            Order book = await db.Orders.Include(x => x.Member).Include(x => x.OrderDetails).FirstOrDefaultAsync(x => x.OrderId == id);
-            return book;
+            Order obj = await db.Orders.Include(x => x.Member).Include(x => x.OrderDetails).FirstOrDefaultAsync(x => x.OrderId == id);
+            return obj;
         }
 
-        public async Task Add(Order book)
+        public async Task Add(Order obj)
         {
             var db = new eStoreDbContext();
-            db.Orders.Add(book);
+            db.Orders.Add(obj);
             await db.SaveChangesAsync();
         }
 
-        public async Task Update(Order book)
+        public async Task Update(Order obj)
         {
             var db = new eStoreDbContext();
-            db.Orders.Update(book);
+            db.Orders.Update(obj);
             await db.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
         {
             var db = new eStoreDbContext();
-            Order book = new Order { OrderId = id };
-            db.Orders.Attach(book);
-            db.Orders.Remove(book);
+            Order obj = new Order { OrderId = id };
+            db.Orders.Attach(obj);
+            db.Orders.Remove(obj);
             await db.SaveChangesAsync();
         }
     }
