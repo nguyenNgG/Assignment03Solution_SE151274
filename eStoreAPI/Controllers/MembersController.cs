@@ -1,8 +1,14 @@
 ﻿using BusinessObject;
 using eStoreAPI.Models;
+using eStoreClient.Constants;
+using eStoreClient.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace eStoreAPI.Controllers
@@ -13,12 +19,14 @@ namespace eStoreAPI.Controllers
     {
         private readonly UserManager<Member> userManager;
         private readonly SignInManager<Member> signInManager;
+        private readonly IConfiguration configuration;
 
         public MembersController(SignInManager<Member> _signInManager,
-            UserManager<Member> _userManager)
+            UserManager<Member> _userManager, IConfiguration _configuration)
         {
             userManager = _userManager;
             signInManager = _signInManager;
+            configuration = _configuration;
         }
 
         [HttpPost("register")]
@@ -30,7 +38,6 @@ namespace eStoreAPI.Controllers
                 var result = await userManager.CreateAsync(member, obj.Password);
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(member, isPersistent: false);
                     return Ok();
                 }
                 else
@@ -49,7 +56,19 @@ namespace eStoreAPI.Controllers
         {
             try
             {
+                string adminEmail = configuration.GetValue<string>("Admin:Email");
+                string adminPassword = configuration.GetValue<string>("Admin:Password");
+
+                bool isAdmin = (obj.Email == adminEmail && obj.Password == adminPassword);
+
+                if (isAdmin)
+                {
+                    obj.Email = "admin@estore.com";
+                    obj.Password = "QWEasd123!";
+                }
+
                 var result = await signInManager.PasswordSignInAsync(obj.Email, obj.Password, obj.RememberMe, lockoutOnFailure: true);
+
                 if (result.Succeeded)
                 {
                     return Ok();
@@ -58,10 +77,93 @@ namespace eStoreAPI.Controllers
                 {
                     return Forbid();
                 }
-                else
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            try
+            {
+                await signInManager.SignOutAsync();
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("test")]
+        [Authorize(Roles = "Administrator")]
+        public ActionResult Test()
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
                 {
-                    return BadRequest();
+                    return Ok();
                 }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("authenticate")]
+        public ActionResult Authenticate()
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    return Ok();
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("authorize")]
+        public ActionResult Authorize()
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    if (User.IsInRole("Administrator"))
+                    {
+                        return Ok();
+                    }
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("current")]
+        public ActionResult Current()
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                return BadRequest();
             }
             catch
             {
