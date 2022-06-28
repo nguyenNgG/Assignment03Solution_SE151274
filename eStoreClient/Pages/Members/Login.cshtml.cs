@@ -11,17 +11,18 @@ using System.Threading.Tasks;
 
 namespace eStoreClient.Pages.Members
 {
-    public class RegisterModel : PageModel
+    public class LoginModel : PageModel
     {
         private readonly HttpSessionStorage sessionStorage;
-
-        public RegisterModel(HttpSessionStorage _sessionStorage)
+        public LoginModel(HttpSessionStorage _sessionStorage)
         {
             sessionStorage = _sessionStorage;
         }
 
         [BindProperty]
-        public RegisterInput Input { get; set; }
+        public LoginInput Input { get; set; }
+
+        public string ErrorMessage { get; set; }
 
         public async Task<ActionResult> OnGetAsync()
         {
@@ -46,13 +47,19 @@ namespace eStoreClient.Pages.Members
 
                 HttpClient httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
                 StringContent body = new StringContent(JsonSerializer.Serialize(Input), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync(Endpoints.Register, body);
+                HttpResponseMessage response = await httpClient.PostAsync(Endpoints.Login, body);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return RedirectToPage(PageRoute.Home);
                 }
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    ErrorMessage = "This account has been locked out, please try again later.";
+                    return Page();
+                }
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
+                    ErrorMessage = "Email/password entered was invalid.";
                     return Page();
                 }
             }
