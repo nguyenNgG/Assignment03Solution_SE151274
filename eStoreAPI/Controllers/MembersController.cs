@@ -99,61 +99,6 @@ namespace eStoreAPI.Controllers
             }
         }
 
-        [HttpGet("test")]
-        [Authorize(Roles = "Administrator")]
-        public ActionResult Test()
-        {
-            try
-            {
-                if (signInManager.IsSignedIn(User))
-                {
-                    return Ok();
-                }
-                return BadRequest();
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("authenticate")]
-        public ActionResult Authenticate()
-        {
-            try
-            {
-                if (signInManager.IsSignedIn(User))
-                {
-                    return Ok();
-                }
-                return BadRequest();
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("authorize")]
-        public ActionResult Authorize()
-        {
-            try
-            {
-                if (signInManager.IsSignedIn(User))
-                {
-                    if (User.IsInRole("Administrator"))
-                    {
-                        return Ok();
-                    }
-                }
-                return BadRequest();
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("current")]
         public ActionResult Current()
         {
