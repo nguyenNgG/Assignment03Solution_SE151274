@@ -4,9 +4,12 @@ using DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 
 namespace eStoreAPI
@@ -20,14 +23,32 @@ namespace eStoreAPI
 
         public IConfiguration Configuration { get; }
 
+        private static IEdmModel GetEdmModel()
+        {
+            var builder = new ODataConventionModelBuilder();
+            builder.EntitySet<Product>("Products").EntityType.HasKey(x => x.ProductId);
+            builder.EntitySet<Member>("Members").EntityType.HasKey(x => x.Id);
+            builder.EntitySet<Order>("Orders").EntityType.HasKey(x => x.OrderId);
+            builder.EntitySet<OrderDetail>("OrderDetails").EntityType.HasKey(x => new { x.OrderId, x.ProductId });
+            builder.EntitySet<Category>("Categories").EntityType.HasKey(x => x.CategoryId);
+            return builder.GetEdmModel();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<eStoreDbContext>();
             services.AddIdentity<Member, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<eStoreDbContext>();
 
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
+
             services.AddControllers();
+            services.AddControllers().AddOData(option => option
+            .Select().Filter().Count().OrderBy().Expand().SetMaxTop(100).AddRouteComponents("odata", GetEdmModel()));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eStoreAPI", Version = "v1" });
@@ -43,6 +64,8 @@ namespace eStoreAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "eStoreAPI v1"));
             }
+
+            app.UseODataBatching();
 
             app.UseRouting();
 

@@ -1,17 +1,29 @@
-﻿@using eStoreClient.Constants
-<ul class="navbar-nav">
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.EditProfile" title="Manage">Hello </a>
-    </li>
-    <li class="nav-item">
-        <form class="form-inline" asp-area="" asp-page="@PageRoute.Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Login">Login</a>
-    </li>
-</ul>
+﻿@using System.Net
+@using eStoreClient.Constants
+@using eStoreClient.Utilities
+@inject HttpSessionStorage sessionStorage;
+@{
+    var response = await SessionHelper.Current(Context.Session, sessionStorage);
+    <ul class="navbar-nav">
+        @switch (response.StatusCode)
+        {
+        case HttpStatusCode.OK:
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.EditProfile" title="Manage">Hello </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Logout">Logout</a>
+        </li>
+        break;
+        default:
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Login">Login</a>
+        </li>
+        break;
+        }
+    </ul>
+}
+

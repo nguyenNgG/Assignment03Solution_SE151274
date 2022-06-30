@@ -1,13 +1,9 @@
 ﻿using BusinessObject;
 using eStoreAPI.Models;
-using eStoreClient.Constants;
-using eStoreClient.Utilities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

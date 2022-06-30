@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace eStoreClient.Pages.Members
@@ -19,20 +20,34 @@ namespace eStoreClient.Pages.Members
 
         public async Task<ActionResult> OnGet()
         {
-            HttpResponseMessage response = await SessionHelper.Current(HttpContext.Session, sessionStorage);
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                return Page();
+                var response = await SessionHelper.Current(HttpContext.Session, sessionStorage);
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        return Page();
+                }
+                return RedirectToPage(PageRoute.Login);
             }
-            return RedirectToPage(PageRoute.Login);
+            catch
+            {
+            }
+            return RedirectToPage(PageRoute.Home);
         }
 
-        public ActionResult OnPost()
+        public async Task<ActionResult> OnPost()
         {
-            SessionHelper.GetNewHttpClient(HttpContext.Session, sessionStorage);
-            HttpClient httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
-
-            return RedirectToPage(PageRoute.Login);
+            var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
+            var body = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(Endpoints.Logout, body);
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    SessionHelper.GetNewHttpClient(HttpContext.Session, sessionStorage);
+                    return RedirectToPage(PageRoute.Login);
+            }
+            return Page();
         }
     }
 }

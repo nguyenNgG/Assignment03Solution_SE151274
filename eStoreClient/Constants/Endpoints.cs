@@ -7,8 +7,7 @@
 
         public static string Register = $"{BaseUri}/Members/register";
         public static string Login = $"{BaseUri}/Members/login";
-        public static string Authenticate = $"{BaseUri}/Members/authenticate";
-        public static string Authorize = $"{BaseUri}/Members/authorize";
+        public static string Logout = $"{BaseUri}/Members/logout";
         public static string Current = $"{BaseUri}/Members/current";
         public static string Cart = $"{BaseUri}/Members/cart";
 

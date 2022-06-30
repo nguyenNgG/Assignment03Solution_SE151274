@@ -5,7 +5,6 @@ namespace eStoreClient.Models
     public class LoginInput
     {
         [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

@@ -28,7 +28,13 @@ namespace eStoreClient.Pages.Members
         {
             try
             {
-                // add login check
+                var response = await SessionHelper.Current(HttpContext.Session, sessionStorage);
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        return RedirectToPage(PageRoute.Home);
+                }
+                return Page();
             }
             catch
             {
@@ -45,22 +51,19 @@ namespace eStoreClient.Pages.Members
                     return Page();
                 }
 
-                HttpClient httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
-                StringContent body = new StringContent(JsonSerializer.Serialize(Input), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync(Endpoints.Login, body);
-                if (response.StatusCode == HttpStatusCode.OK)
+                var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
+                var body = new StringContent(JsonSerializer.Serialize(Input), Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(Endpoints.Login, body);
+                switch (response.StatusCode)
                 {
-                    return RedirectToPage(PageRoute.Home);
-                }
-                if (response.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    ErrorMessage = "This account has been locked out, please try again later.";
-                    return Page();
-                }
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    ErrorMessage = "Email/password entered was invalid.";
-                    return Page();
+                    case HttpStatusCode.OK:
+                        return RedirectToPage(PageRoute.Home);
+                    case HttpStatusCode.Forbidden:
+                        ErrorMessage = "This account has been locked out, please try again later.";
+                        return Page();
+                    case HttpStatusCode.BadRequest:
+                        ErrorMessage = "Email/password entered was invalid.";
+                        return Page();
                 }
             }
             catch

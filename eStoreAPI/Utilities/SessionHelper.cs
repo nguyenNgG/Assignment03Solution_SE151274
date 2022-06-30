@@ -1,8 +1,5 @@
-﻿using eStoreClient.Constants;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace eStoreClient.Utilities
 {
