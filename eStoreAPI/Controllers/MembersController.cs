@@ -113,7 +113,7 @@ namespace eStoreAPI.Controllers
             {
                 if (signInManager.IsSignedIn(User))
                 {
-                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value.ToString());
                 }
                 return BadRequest();
             }
@@ -131,7 +131,7 @@ namespace eStoreAPI.Controllers
             {
                 if (User.IsInRole(RoleName.Administrator))
                 {
-                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value.ToString());
                 }
                 return BadRequest();
             }

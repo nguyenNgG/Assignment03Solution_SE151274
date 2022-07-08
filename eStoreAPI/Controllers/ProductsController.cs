@@ -68,7 +68,7 @@ namespace eProductStoreAPI.Controllers
         }
 
         [HttpPut("{key}")]
-        [Authorize(Roles = RoleName.Administrator)]
+        [Authorize]
         public async Task<ActionResult<Product>> Put([FromODataUri] int key, Product obj)
         {
             if (key != obj.ProductId)

@@ -29,7 +29,6 @@ namespace eStoreClient.Pages.Orders
         public Cart Cart { get; set; }
         public List<Member> Members { get; set; }
 
-        [TempData]
         public string? MemberId { get; set; } = null!;
 
         public async Task<ActionResult> OnGetAsync()
@@ -42,13 +41,11 @@ namespace eStoreClient.Pages.Orders
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     MemberId = await content.ReadAsStringAsync();
-                    TempData["MemberId"] = MemberId;
 
                     response = await SessionHelper.Authorize(HttpContext.Session, sessionStorage);
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         MemberId = null;
-                        TempData["MemberId"] = null;
                     }
 
                     var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
@@ -57,6 +54,11 @@ namespace eStoreClient.Pages.Orders
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         Members = JsonSerializer.Deserialize<ODataModels<Member>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
+
+                        if (MemberId != null)
+                        {
+                            Members.RemoveAll(x => x.Id != MemberId);
+                        }
 
                         ViewData["MemberId"] = new SelectList(Members, "Id", "Email");
 
@@ -89,18 +91,23 @@ namespace eStoreClient.Pages.Orders
         {
             try
             {
-                MemberId = (string?)TempData.Peek("MemberId");
-                TempData.Keep("MemberId");
-
                 var response = await SessionHelper.Current(HttpContext.Session, sessionStorage);
+                var content = response.Content;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
+                    MemberId = await content.ReadAsStringAsync();
+
                     var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
                     response = await httpClient.GetAsync($"{Endpoints.Members}");
-                    var content = response.Content;
+                    content = response.Content;
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         Members = JsonSerializer.Deserialize<ODataModels<Member>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
+
+                        if (MemberId != null)
+                        {
+                            Members.RemoveAll(x => x.Id != MemberId);
+                        }
 
                         ViewData["MemberId"] = new SelectList(Members, "Id", "Email");
 
