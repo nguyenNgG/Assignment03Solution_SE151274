@@ -2,6 +2,6 @@
 {
     public static class SessionValue
     {
-        public static string HttpSessionIndex = "HttpSessionIndex";
+        public const string HttpSessionIndex = "HttpSessionIndex";
     }
 }

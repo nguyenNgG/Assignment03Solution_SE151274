@@ -16,23 +16,23 @@ namespace BusinessObject
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int OrderId { get; set; }
 
-        public string MemberId { get; set; }
+        public string? MemberId { get; set; }
 
         [ForeignKey("MemberId")]
-        public Member Member { get; set; }
+        public Member? Member { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime RequiredDate { get; set; }
+        public DateTime? RequiredDate { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
         public DateTime? ShippedDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Freight { get; set; }
+        public decimal? Freight { get; set; }
 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }

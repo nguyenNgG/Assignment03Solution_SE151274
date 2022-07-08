@@ -37,6 +37,8 @@ namespace eStoreAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
             services.AddDbContext<eStoreDbContext>();
             services.AddIdentity<Member, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<eStoreDbContext>();
 
@@ -71,6 +73,8 @@ namespace eStoreAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

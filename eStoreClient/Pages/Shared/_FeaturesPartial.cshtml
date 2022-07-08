@@ -1,0 +1,21 @@
+﻿@using System.Net
+@using eStoreClient.Constants
+@using eStoreClient.Utilities
+@inject HttpSessionStorage sessionStorage;
+@{
+    var response = await SessionHelper.Current(Context.Session, sessionStorage);
+    @if (response.StatusCode == HttpStatusCode.OK)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Orders">Orders</a>
+        </li>
+    }
+    response = await SessionHelper.Authorize(Context.Session, sessionStorage);
+    @if (response.StatusCode == HttpStatusCode.OK)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Products">Products</a>
+        </li>
+    }
+}
+

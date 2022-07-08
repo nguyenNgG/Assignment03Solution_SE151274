@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -22,6 +23,7 @@ namespace eOrderStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<Order>>> Get()
         {
             var list = await repository.GetList();
@@ -34,6 +36,7 @@ namespace eOrderStoreAPI.Controllers
 
         [EnableQuery]
         [HttpGet("{key}")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetOrder([FromODataUri] int key)
         {
             var obj = await repository.Get(key);
@@ -45,12 +48,13 @@ namespace eOrderStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Order>> Post(Order obj)
         {
             try
             {
                 await repository.Add(obj);
-                return Created(obj);
+                return Ok(obj);
             }
             catch (DbUpdateException)
             {
@@ -63,6 +67,7 @@ namespace eOrderStoreAPI.Controllers
         }
 
         [HttpPut("{key}")]
+        [Authorize]
         public async Task<ActionResult<Order>> Put([FromODataUri] int key, Order obj)
         {
             if (key != obj.OrderId)
@@ -86,12 +91,13 @@ namespace eOrderStoreAPI.Controllers
         }
 
         [HttpDelete("{key}")]
+        [Authorize]
         public async Task<ActionResult<Order>> Delete([FromODataUri] int key)
         {
             try
             {
                 await repository.Delete(key);
-                return NoContent();
+                return Ok();
             }
             catch (DbUpdateException)
             {

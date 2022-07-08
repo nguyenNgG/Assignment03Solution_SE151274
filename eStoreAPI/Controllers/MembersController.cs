@@ -1,9 +1,17 @@
 ﻿using BusinessObject;
+using DataAccess.Repositories.Interfaces;
+using eStoreAPI.Constants;
 using eStoreAPI.Models;
+using eStoreClient.Constants;
+using eStoreClient.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Formatter;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -16,13 +24,15 @@ namespace eStoreAPI.Controllers
         private readonly UserManager<Member> userManager;
         private readonly SignInManager<Member> signInManager;
         private readonly IConfiguration configuration;
+        private readonly IMemberRepository repository;
 
         public MembersController(SignInManager<Member> _signInManager,
-            UserManager<Member> _userManager, IConfiguration _configuration)
+            UserManager<Member> _userManager, IConfiguration _configuration, IMemberRepository _repository)
         {
             userManager = _userManager;
             signInManager = _signInManager;
             configuration = _configuration;
+            repository = _repository;
         }
 
         [HttpPost("register")]
@@ -96,6 +106,7 @@ namespace eStoreAPI.Controllers
         }
 
         [HttpGet("current")]
+        [Authorize]
         public ActionResult Current()
         {
             try
@@ -110,6 +121,74 @@ namespace eStoreAPI.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet("authorize")]
+        [Authorize(Roles = RoleName.Administrator)]
+        public ActionResult Authorize()
+        {
+            try
+            {
+                if (User.IsInRole(RoleName.Administrator))
+                {
+                    return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("cart")]
+        [Authorize]
+        public ActionResult<Cart> GetCart()
+        {
+            Cart cart = SessionHelper.GetFromSession<Cart>(HttpContext.Session, SessionValue.Cart);
+            if (cart == null)
+            {
+                cart = new Cart();
+            }
+            return Ok(cart);
+        }
+
+        [HttpPost("cart")]
+        [Authorize]
+        public ActionResult<Cart> SetCart(Cart cart)
+        {
+            if (cart == null)
+            {
+                return BadRequest();
+            }
+            SessionHelper.SaveToSession<Cart>(HttpContext.Session, cart, SessionValue.Cart);
+            return Ok(cart);
+        }
+
+        [EnableQuery(MaxExpansionDepth = 5)]
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<Member>>> Get()
+        {
+            var list = await repository.GetList();
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
+
+        [EnableQuery]
+        [HttpGet("{key}")]
+        [Authorize]
+        public async Task<ActionResult<Member>> GetMember([FromODataUri] string key)
+        {
+            var obj = await repository.Get(key);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return Ok(obj);
         }
 
         [HttpPost]

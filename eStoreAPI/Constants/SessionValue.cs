@@ -2,6 +2,7 @@
 {
     public static class SessionValue
     {
-        public static string Authentication = "Authentication";
+        public const string Authentication = "Authentication";
+        public const string Cart = "Cart";
     }
 }

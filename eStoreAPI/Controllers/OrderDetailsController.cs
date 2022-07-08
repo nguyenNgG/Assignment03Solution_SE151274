@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -22,6 +23,7 @@ namespace eOrderDetailStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<OrderDetail>>> Get()
         {
             var list = await repository.GetList();
@@ -34,6 +36,7 @@ namespace eOrderDetailStoreAPI.Controllers
 
         [EnableQuery]
         [HttpGet("{key}")]
+        [Authorize]
         public async Task<ActionResult<OrderDetail>> GetOrderDetail([FromODataUri] int keyOrderId, [FromODataUri] int keyProductId)
         {
             var obj = await repository.Get(keyOrderId, keyProductId);
@@ -50,7 +53,7 @@ namespace eOrderDetailStoreAPI.Controllers
             try
             {
                 await repository.Add(obj);
-                return Created(obj);
+                return Ok(obj);
             }
             catch (DbUpdateException)
             {
@@ -91,7 +94,7 @@ namespace eOrderDetailStoreAPI.Controllers
             try
             {
                 await repository.Delete(keyOrderId, keyProductId);
-                return NoContent();
+                return Ok();
             }
             catch (DbUpdateException)
             {

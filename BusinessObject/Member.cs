@@ -12,11 +12,11 @@ namespace BusinessObject
         }
 
         [Column(TypeName = "nvarchar(256)")]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [Column(TypeName = "nvarchar(256)")]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<Order>? Orders { get; set; }
     }
 }

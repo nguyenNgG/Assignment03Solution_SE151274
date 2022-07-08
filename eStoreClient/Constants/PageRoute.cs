@@ -3,18 +3,28 @@
     public static class PageRoute
     {
         // Home
-        public static string Home = "/Index";
+        public const string Home = "/Index";
 
-        // Users
-        public static string Users = "/Members/Index";
-        public static string Login = "/Members/Login";
-        public static string Logout = "/Members/Logout";
-        public static string Register = "/Members/Register";
-        public static string Profile = "/Members/Details";
-        public static string EditProfile = "/Members/Edit";
+        // Members
+        public const string Members = "/Members/Index";
+        public const string Login = "/Members/Login";
+        public const string Logout = "/Members/Logout";
+        public const string Register = "/Members/Register";
+        public const string Profile = "/Members/Details";
+        public const string EditProfile = "/Members/Edit";
+
+        // Order
+        public const string Orders = "/Orders/Index";
+        public const string OrderPrepare = "/Orders/Prepare";
+
+        // Products
+        public const string Products = "/Products/Index";
 
         // Cart
-        public static string Cart = "/Cart/Details";
-        public static string CartCreate = "/Cart/Create";
+        public const string Cart = "/Carts/Details";
+        public const string CartCreate = "/Carts/Create";
+        public const string CartEdit = "/Carts/Edit";
+        public const string CartDelete = "/Carts/Delete";
+
     }
 }

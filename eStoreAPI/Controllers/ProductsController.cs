@@ -1,5 +1,7 @@
 ﻿using BusinessObject;
 using DataAccess.Repositories.Interfaces;
+using eStoreAPI.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -22,6 +24,7 @@ namespace eProductStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<Product>>> Get()
         {
             var list = await repository.GetList();
@@ -34,6 +37,7 @@ namespace eProductStoreAPI.Controllers
 
         [EnableQuery]
         [HttpGet("{key}")]
+        [Authorize]
         public async Task<ActionResult<Product>> GetProduct([FromODataUri] int key)
         {
             var obj = await repository.Get(key);
@@ -45,12 +49,13 @@ namespace eProductStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleName.Administrator)]
         public async Task<ActionResult<Product>> Post(Product obj)
         {
             try
             {
                 await repository.Add(obj);
-                return Created(obj);
+                return Ok(obj);
             }
             catch (DbUpdateException)
             {
@@ -63,6 +68,7 @@ namespace eProductStoreAPI.Controllers
         }
 
         [HttpPut("{key}")]
+        [Authorize(Roles = RoleName.Administrator)]
         public async Task<ActionResult<Product>> Put([FromODataUri] int key, Product obj)
         {
             if (key != obj.ProductId)
@@ -86,12 +92,13 @@ namespace eProductStoreAPI.Controllers
         }
 
         [HttpDelete("{key}")]
+        [Authorize(Roles = RoleName.Administrator)]
         public async Task<ActionResult<Product>> Delete([FromODataUri] int key)
         {
             try
             {
                 await repository.Delete(key);
-                return NoContent();
+                return Ok();
             }
             catch (DbUpdateException)
             {

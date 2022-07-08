@@ -16,7 +16,7 @@ namespace BusinessObject
         public int CategoryId { get; set; }
 
         [Column(TypeName = "nvarchar(256)")]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         public ICollection<Product> Products { get; set; }
     }

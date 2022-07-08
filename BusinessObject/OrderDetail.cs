@@ -10,14 +10,14 @@ namespace BusinessObject
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal UnitPrice { get; set; }
+        public decimal? UnitPrice { get; set; }
 
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
-        public decimal Discount { get; set; }
+        public decimal? Discount { get; set; }
     }
 }

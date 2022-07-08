@@ -14,6 +14,12 @@ namespace eStoreClient.Utilities
             return await httpClient.GetAsync(Endpoints.Current);
         }
 
+        public static async Task<HttpResponseMessage> Authorize(ISession session, HttpSessionStorage sessionStorage)
+        {
+            HttpClient httpClient = GetHttpClient(session, sessionStorage);
+            return await httpClient.GetAsync(Endpoints.Authorize);
+        }
+
         public static void GetNewHttpClient(ISession session, HttpSessionStorage sessionStorage)
         {
             HttpClient httpClient = new HttpClient();

@@ -15,22 +15,22 @@ namespace BusinessObject
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ProductId { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         [Column(TypeName = "nvarchar(256)")]
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
-        public decimal Weight { get; set; }
+        public decimal? Weight { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal UnitPrice { get; set; }
+        public decimal? UnitPrice { get; set; }
 
-        public int UnitsInStock { get; set; }
+        public int? UnitsInStock { get; set; }
 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -22,6 +23,7 @@ namespace eCategoryStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<Category>>> Get()
         {
             var list = await repository.GetList();
@@ -34,6 +36,7 @@ namespace eCategoryStoreAPI.Controllers
 
         [EnableQuery]
         [HttpGet("{key}")]
+        [Authorize]
         public async Task<ActionResult<Category>> GetCategory([FromODataUri] int key)
         {
             var obj = await repository.Get(key);
@@ -45,12 +48,13 @@ namespace eCategoryStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Category>> Post(Category obj)
         {
             try
             {
                 await repository.Add(obj);
-                return Created(obj);
+                return Ok(obj);
             }
             catch (DbUpdateException)
             {
@@ -63,6 +67,7 @@ namespace eCategoryStoreAPI.Controllers
         }
 
         [HttpPut("{key}")]
+        [Authorize]
         public async Task<ActionResult<Category>> Put([FromODataUri] int key, Category obj)
         {
             if (key != obj.CategoryId)
@@ -86,12 +91,13 @@ namespace eCategoryStoreAPI.Controllers
         }
 
         [HttpDelete("{key}")]
+        [Authorize]
         public async Task<ActionResult<Category>> Delete([FromODataUri] int key)
         {
             try
             {
                 await repository.Delete(key);
-                return NoContent();
+                return Ok();
             }
             catch (DbUpdateException)
             {
