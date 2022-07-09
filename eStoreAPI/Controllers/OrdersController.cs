@@ -23,7 +23,6 @@ namespace eOrderStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<List<Order>>> Get()
         {
             var list = await repository.GetList();

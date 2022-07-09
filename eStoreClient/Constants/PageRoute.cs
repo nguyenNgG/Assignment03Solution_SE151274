@@ -16,6 +16,9 @@
         public const string Orders = "/Orders/Index";
         public const string OrderPrepare = "/Orders/Prepare";
 
+        // Reports
+        public const string Report = "/Reports/Report";
+
         // Products
         public const string Products = "/Products/Index";
 

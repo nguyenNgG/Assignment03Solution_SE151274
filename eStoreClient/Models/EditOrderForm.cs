@@ -7,9 +7,11 @@ namespace eStoreClient.Models
     {
         [DataType(DataType.DateTime)]
         [Display(Name = "Shipped Date")]
+        [Required]
         public DateTime? ShippedDate { get; set; }
 
-        [Required(ErrorMessage = "{0} is required. ")]
+        [Required]
+        [Range(0, 999999)]
         public decimal? Freight { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace DataAccess.DAOs
         {
             var db = new eStoreDbContext();
             List<Order> objs = null;
-            objs = await db.Orders.Include(x => x.Member).ToListAsync();
+            objs = await db.Orders.Include(x => x.Member).Include(x => x.OrderDetails).ToListAsync();
             return objs;
         }
 

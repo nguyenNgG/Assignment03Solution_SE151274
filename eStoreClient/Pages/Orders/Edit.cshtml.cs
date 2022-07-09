@@ -84,6 +84,11 @@ namespace eStoreClient.Pages.Orders
                     {
                         Order order = JsonSerializer.Deserialize<Order>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive);
 
+                        if (!ModelState.IsValid)
+                        {
+                            return Page();
+                        }
+
                         if (EditOrderForm.ShippedDate != null)
                         {
                             if (((DateTime)EditOrderForm.ShippedDate).CompareTo(order.OrderDate) <= 0)
