@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using BusinessObject;
+using eStoreClient.Constants;
+using eStoreClient.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Text.Json;
 using System.Net;
-using eStoreClient.Utilities;
-using eStoreClient.Constants;
-using BusinessObject;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace eStoreClient.Pages.Members
 {

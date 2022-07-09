@@ -1,5 +1,4 @@
-﻿using eStoreClient.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace eStoreClient.Utilities
 {

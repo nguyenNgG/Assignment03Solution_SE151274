@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace eStoreAPI.Models
+﻿namespace eStoreAPI.Models
 {
     public class NewEmailInput
     {

@@ -1,5 +1,4 @@
-﻿using eStoreClient.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace eStoreClient.Utilities
 {
@@ -24,7 +23,7 @@ namespace eStoreClient.Utilities
                         {
                             isAllUpper = false;
                         }
-                        foreach(var chr in chrs)
+                        foreach (var chr in chrs)
                         {
                             if (char.IsDigit(chr) || !char.IsLetterOrDigit(chr))
                             {
