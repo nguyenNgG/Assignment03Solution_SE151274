@@ -24,7 +24,6 @@ namespace eProductStoreAPI.Controllers
 
         [EnableQuery(MaxExpansionDepth = 5)]
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<List<Product>>> Get()
         {
             var list = await repository.GetList();

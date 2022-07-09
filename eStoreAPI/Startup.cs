@@ -48,6 +48,8 @@ namespace eStoreAPI
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
 
+            services.AddCors();
+
             services.AddControllers();
             services.AddControllers().AddOData(option => option
             .Select().Filter().Count().OrderBy().Expand().SetMaxTop(100).AddRouteComponents("odata", GetEdmModel()));
@@ -68,6 +70,11 @@ namespace eStoreAPI
             }
 
             app.UseODataBatching();
+
+            app.UseCors(options =>
+            {
+                options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            });
 
             app.UseRouting();
 
