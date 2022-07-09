@@ -54,7 +54,7 @@ namespace eStoreClient.Pages.Orders
                         Order = JsonSerializer.Deserialize<Order>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive);
 
                         httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
-                        response = await httpClient.GetAsync($"{Endpoints.OrderDetails}?$filter=OrderId eq {Order.OrderId}");
+                        response = await httpClient.GetAsync($"{Endpoints.OrderDetails}?$filter=OrderId eq {Order.OrderId}&$expand=Product");
                         content = response.Content;
                         if (response.StatusCode == HttpStatusCode.OK)
                         {

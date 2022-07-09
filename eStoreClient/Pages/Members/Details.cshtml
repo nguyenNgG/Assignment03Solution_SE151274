@@ -1,0 +1,45 @@
+﻿@page
+@model eStoreClient.Pages.Members.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Member</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Member.UserName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Member.UserName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Member.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Member.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Member.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Member.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Member.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Member.LastName)
+        </dd>
+    </dl>
+</div>
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link" asp-page="./Email" asp-route-id="@Model.Member.Id">Change Email</a></li>
+    <li class="nav-item"><a class="nav-link" asp-page="./Password" asp-route-id="@Model.Member.Id">Change Password</a></li>
+    <li class="nav-item"><a class="nav-link" asp-page="./Name" asp-route-id="@Model.Member.Id">Change Name</a></li>
+</ul>
+

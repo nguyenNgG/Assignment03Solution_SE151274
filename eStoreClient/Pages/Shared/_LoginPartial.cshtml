@@ -4,25 +4,30 @@
 @inject HttpSessionStorage sessionStorage;
 @{
     var response = await SessionHelper.Current(Context.Session, sessionStorage);
+    var memberId = await response.Content.ReadAsStringAsync();
     <ul class="navbar-nav">
         @switch (response.StatusCode)
         {
-        case HttpStatusCode.OK:
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.EditProfile">Hello </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Logout">Logout</a>
-        </li>
-        break;
-        default:
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Login">Login</a>
-        </li>
-        break;
+            case HttpStatusCode.OK:
+                response = await SessionHelper.Authorize(Context.Session, sessionStorage);
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Profile" asp-route-id="@memberId">Profile</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Logout">Logout</a>
+                </li>
+                break;
+            default:
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Register">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-page="@PageRoute.Login">Login</a>
+                </li>
+                break;
         }
     </ul>
 }

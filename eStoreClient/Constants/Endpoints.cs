@@ -11,6 +11,9 @@
         public static string Current = $"{BaseUri}/Members/current";
         public static string Authorize = $"{BaseUri}/Members/authorize";
         public static string Cart = $"{BaseUri}/Members/cart";
+        public static string Email = $"{BaseUri}/Members/email";
+        public static string Password = $"{BaseUri}/Members/password";
+        public static string Name = $"{BaseUri}/Members/name";
 
         public static string Members = $"{BaseOdataUri}/Members";
         public static string Products = $"{BaseOdataUri}/Products";

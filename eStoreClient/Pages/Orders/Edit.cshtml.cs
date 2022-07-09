@@ -97,7 +97,7 @@ namespace eStoreClient.Pages.Orders
                             }
                         }
                         order.Freight = EditOrderForm.Freight;
-                        order.ShippedDate = EditOrderForm.ShippedDate;
+                        order.ShippedDate = EditOrderForm.ShippedDate.Value.ToUniversalTime();
                         string v = JsonSerializer.Serialize(order);
                         StringContent body = new StringContent(v, Encoding.UTF8, "application/json");
                         response = await httpClient.PutAsync($"{Endpoints.Orders}/{OrderId}", body);

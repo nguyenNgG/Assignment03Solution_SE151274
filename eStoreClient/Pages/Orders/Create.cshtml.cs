@@ -29,6 +29,8 @@ namespace eStoreClient.Pages.Orders
         public Cart Cart { get; set; }
         public List<Member> Members { get; set; }
 
+        public string IdTakenMessage { get; set; }
+
         public string? MemberId { get; set; } = null!;
 
         public async Task<ActionResult> OnGetAsync()
@@ -54,6 +56,8 @@ namespace eStoreClient.Pages.Orders
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         Members = JsonSerializer.Deserialize<ODataModels<Member>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
+
+                        Members.RemoveAll(x => x.Email == "admin@estore.com");
 
                         if (MemberId != null)
                         {
@@ -91,6 +95,7 @@ namespace eStoreClient.Pages.Orders
         {
             try
             {
+                IdTakenMessage = "";
                 var response = await SessionHelper.Current(HttpContext.Session, sessionStorage);
                 var content = response.Content;
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -144,7 +149,7 @@ namespace eStoreClient.Pages.Orders
                                 if (response.StatusCode == HttpStatusCode.OK)
                                 {
                                     Product product = JsonSerializer.Deserialize<Product>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive);
-                                    product.UnitsInStock -= orderDetail.Quantity;
+                                    product.UnitsInStock -= (int)orderDetail.Quantity!;
                                     if (product.UnitsInStock < 0) product.UnitsInStock = 0;
                                     StringContent body = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
                                     response = await httpClient.PutAsync($"{Endpoints.Products}/{product.ProductId}", body);
@@ -157,6 +162,12 @@ namespace eStoreClient.Pages.Orders
                             string ord = JsonSerializer.Serialize(Order);
                             StringContent orderBody = new StringContent(ord, Encoding.UTF8, "application/json");
                             response = await httpClient.PostAsync($"{Endpoints.Orders}", orderBody);
+
+                            if (response.StatusCode == HttpStatusCode.Conflict)
+                            {
+                                IdTakenMessage = Message.IdTaken;
+                                return Page();
+                            }
 
                             Cart.CartDetails.Clear();
                             StringContent cartBody = new StringContent(JsonSerializer.Serialize(Cart), Encoding.UTF8, "application/json");

@@ -1,0 +1,21 @@
+﻿@page
+@model eStoreClient.Pages.Members.EmailModel
+@{
+}
+<div class="form-group">
+    <label asp-for="Member.Email"></label>
+    <input asp-for="Member.Email" class="form-control" disabled />
+</div>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.NewEmail"></label>
+        <input asp-for="Input.NewEmail" class="form-control" />
+        <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+        <span class="text-danger">@Model.ErrorMessage</span>
+    </div>
+    <button type="submit" class="btn btn-primary">Change email</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -25,12 +25,15 @@ namespace BusinessObject
         public DateTime? OrderDate { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
+        [Required]
         public DateTime? RequiredDate { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
         public DateTime? ShippedDate { get; set; }
 
         [Column(TypeName = "money")]
+        [Required]
+        [Range(0, 999999)]
         public decimal? Freight { get; set; }
 
         public ICollection<OrderDetail>? OrderDetails { get; set; }

@@ -11,13 +11,19 @@
     <a asp-page="Create">Create New</a>
 </p>
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-4">
         <div class="lead">Search</div>
-        <form method="post" class="d-flex flex-row my-3">
-            <input asp-for="@Model.Filter" class="form-control" />
+        <div class="d-flex flex-row">
+            <input class="form-control" />
             <input type="submit" value="Search" class="mx-1 btn btn-primary" />
-        </form>
+        </div>
+        <div class="d-flex flex-column">
+            <span class="lead my-1">Price From</span>
+            <input type="number" class="form-control my-1" value="0" />
+            <span class="lead my-1">To</span>
+            <input type="number" class="form-control my-1" value="0" />
+        </div>
     </div>
 </div>
 

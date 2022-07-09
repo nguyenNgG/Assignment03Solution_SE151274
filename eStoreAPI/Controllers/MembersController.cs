@@ -40,7 +40,7 @@ namespace eStoreAPI.Controllers
         {
             try
             {
-                var member = new Member { UserName = obj.Email, Email = obj.Email };
+                var member = new Member { UserName = obj.Email, Email = obj.Email, FirstName = obj.FirstName, LastName = obj.LastName };
                 var result = await userManager.CreateAsync(member, obj.Password);
                 if (result.Succeeded)
                 {
@@ -132,6 +132,88 @@ namespace eStoreAPI.Controllers
                 if (User.IsInRole(RoleName.Administrator))
                 {
                     return Ok(User.FindFirst(ClaimTypes.NameIdentifier).Value.ToString());
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("email")]
+        [Authorize]
+        public async Task<ActionResult> ChangeEmail(NewEmailInput newEmailInput)
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    var user = await userManager.GetUserAsync(User);
+                    var email = await userManager.GetEmailAsync(user);
+                    if (newEmailInput.NewEmail != email)
+                    {
+                        var result = await userManager.SetEmailAsync(user, newEmailInput.NewEmail);
+                        if (result.Succeeded)
+                        {
+                            result = await userManager.SetUserNameAsync(user, newEmailInput.NewEmail);
+                            if (result.Succeeded)
+                            {
+                                await signInManager.RefreshSignInAsync(user);
+                                return Ok();
+                            }
+                        }
+                    }
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword(NewPasswordInput newPasswordInput)
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    var user = await userManager.GetUserAsync(User);
+                    var result = await userManager.ChangePasswordAsync(user, newPasswordInput.OldPassword, newPasswordInput.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        await signInManager.RefreshSignInAsync(user);
+                        return Ok();
+                    }
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("name")]
+        [Authorize]
+        public async Task<ActionResult> ChangeName(NewNameInput newNameInput)
+        {
+            try
+            {
+                if (signInManager.IsSignedIn(User))
+                {
+                    var user = await userManager.GetUserAsync(User);
+                    user.FirstName = newNameInput.FirstName;
+                    user.LastName = newNameInput.LastName;
+                    var result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        await signInManager.RefreshSignInAsync(user);
+                        return Ok();
+                    }
                 }
                 return BadRequest();
             }

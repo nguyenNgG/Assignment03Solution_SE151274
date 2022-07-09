@@ -11,7 +11,6 @@
         public const string Logout = "/Members/Logout";
         public const string Register = "/Members/Register";
         public const string Profile = "/Members/Details";
-        public const string EditProfile = "/Members/Edit";
 
         // Order
         public const string Orders = "/Orders/Index";

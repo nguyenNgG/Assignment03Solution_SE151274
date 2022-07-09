@@ -46,29 +46,5 @@ namespace eStoreClient.Pages.Products
             }
             return RedirectToPage(PageRoute.Home);
         }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            try
-            {
-                var response = await SessionHelper.Authorize(HttpContext.Session, sessionStorage);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
-                    // to-do: check query options & query accordingly
-                    response = await httpClient.GetAsync($"{Endpoints.Products}?$expand=Category");
-                    var content = response.Content;
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        Products = JsonSerializer.Deserialize<ODataModels<Product>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
-                    }
-                    return Page();
-                }
-            }
-            catch
-            {
-            }
-            return RedirectToPage(PageRoute.Home);
-        }
     }
 }

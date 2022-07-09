@@ -22,6 +22,7 @@ namespace eStoreClient.Pages.Members
 
         [BindProperty]
         public RegisterInput Input { get; set; }
+        public string ErrorMessage { get; set; }
 
         public async Task<ActionResult> OnGetAsync()
         {
@@ -53,11 +54,11 @@ namespace eStoreClient.Pages.Members
                 var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
                 var body = new StringContent(JsonSerializer.Serialize(Input), Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync(Endpoints.Register, body);
-                switch (response.StatusCode)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    case HttpStatusCode.OK:
-                        return RedirectToPage(PageRoute.Home);
+                    return RedirectToPage(PageRoute.Login);
                 }
+                ErrorMessage = "Email is taken.";
             }
             catch
             {

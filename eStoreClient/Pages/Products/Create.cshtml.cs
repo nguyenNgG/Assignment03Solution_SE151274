@@ -24,6 +24,8 @@ namespace eStoreClient.Pages.Products
 
         public List<Category> Categories { get; set; }
 
+        [BindProperty]
+        public Product Product { get; set; }
         public string IdTakenMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
@@ -40,7 +42,6 @@ namespace eStoreClient.Pages.Products
                     {
                         Categories = JsonSerializer.Deserialize<ODataModels<Category>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
                         ViewData["CategoryId"] = new SelectList(Categories, "CategoryId", "CategoryName");
-                        Product = SessionHelper.GetFromSession<Product>(HttpContext.Session, "Product");
                         return Page();
                     }
                     if (response.StatusCode == HttpStatusCode.NotFound)
@@ -55,9 +56,6 @@ namespace eStoreClient.Pages.Products
             return RedirectToPage(PageRoute.Products);
         }
 
-        [BindProperty]
-        public Product Product { get; set; }
-
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
@@ -65,17 +63,31 @@ namespace eStoreClient.Pages.Products
             {
                 IdTakenMessage = "";
                 Product = StringTrimmer.TrimProduct(Product);
-                SessionHelper.SaveToSession(HttpContext.Session, Product, "Product");
+
+                var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
+                var response = await httpClient.GetAsync($"{Endpoints.Categories}");
+                var content = response.Content;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Categories = JsonSerializer.Deserialize<ODataModels<Category>>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive).List;
+                    ViewData["CategoryId"] = new SelectList(Categories, "CategoryId", "CategoryName");
+                }
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return RedirectToPage(PageRoute.Products);
+                }
 
                 if (!ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(OnGetAsync));
+                    return Page();
                 }
 
-                var httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
+                httpClient = SessionHelper.GetHttpClient(HttpContext.Session, sessionStorage);
                 var body = new StringContent(JsonSerializer.Serialize(Product), Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(Endpoints.Products, body);
-                var content = response.Content;
+                response = await httpClient.PostAsync(Endpoints.Products, body);
+                content = response.Content;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     Product = JsonSerializer.Deserialize<Product>(await content.ReadAsStringAsync(), SerializerOptions.CaseInsensitive);
@@ -90,7 +102,7 @@ namespace eStoreClient.Pages.Products
             catch
             {
             }
-            return RedirectToAction(nameof(OnGetAsync));
+            return RedirectToPage(PageRoute.Products);
         }
     }
 }

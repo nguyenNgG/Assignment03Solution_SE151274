@@ -15,21 +15,26 @@ namespace BusinessObject
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ProductId { get; set; }
 
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         public Category? Category { get; set; }
 
         [Column(TypeName = "nvarchar(256)")]
-        public string? ProductName { get; set; }
+        [Required]
+        [StringLength(255, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+        public string ProductName { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
-        public decimal? Weight { get; set; }
+        [Range(1, 999999)]
+        public decimal Weight { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? UnitPrice { get; set; }
+        [Range(0, 999999)]
+        public decimal UnitPrice { get; set; }
 
-        public int? UnitsInStock { get; set; }
+        [Range(0, 999999)]
+        public int UnitsInStock { get; set; }
 
         public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
